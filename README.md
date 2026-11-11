@@ -106,6 +106,12 @@ Workflow `.github/workflows/release.yml` пересоберёт тему, про
 dev-расширение). Повторно опубликовать существующий тег можно вручную:
 Actions → Release → Run workflow.
 
+## Лицензия
+
+Код порта, скрипты и сгенерированные темы распространяются по MIT — см.
+[`LICENSE`](./LICENSE). Файлы оригинальной JetBrains-темы в `src/`
+принадлежат автору Gradianto и включены для воспроизводимой сборки.
+
 ## Благодарности
 
 * [thvardhan/Gradianto](https://github.com/thvardhan/Gradianto) — оригинальная
