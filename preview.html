@@ -1,0 +1,238 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>
+  *{box-sizing:border-box} body{margin:0;background:#111;font-family:'Segoe UI',sans-serif}
+  .wrap{display:flex;flex-direction:column;gap:24px;padding:24px}
+  .card{border-radius:10px;overflow:hidden;box-shadow:0 8px 30px #0008}
+  .titlebar{display:flex;align-items:center;gap:10px;padding:8px 14px;font-size:12px}
+  .tabs{display:flex;gap:2px;padding:0 10px;font-size:12px}
+  .tab{padding:7px 16px;border-radius:6px 6px 0 0}
+  .body{display:flex;min-height:430px}
+  .side{width:210px;padding:12px;font-size:12px;line-height:1.9}
+  .side div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .editor{flex:1;display:flex}
+  .gutter{width:52px;text-align:right;padding:14px 10px 14px 0;font:14px/1.6 Consolas,monospace}
+  .code{flex:1;padding:14px 18px 14px 0;overflow:hidden}
+  .status{display:flex;justify-content:space-between;padding:6px 14px;font-size:12px}
+  .label{font:600 13px 'Segoe UI';padding:0 0 6px 24px;color:#ddd}
+</style></head><body><div class="wrap">
+<div class="card">
+  <div class="titlebar" style="background:#254A39FF;color:#CCCECEFF">
+    <span>● Gradianto Nature Green</span>
+    <span style="margin-left:auto;color:#838d97ff">Gradianto</span>
+  </div>
+  <div class="tabs" style="background:#1E3B39FF">
+    <div class="tab" style="background:#006448FF;color:#CCCECEFF">theme.ts</div>
+    <div class="tab" style="color:#838d97ff">server.ts</div>
+    <div class="tab" style="color:#838d97ff">README.md</div>
+  </div>
+  <div class="body">
+    <div class="side" style="background:#20403FFF;color:#CCCECEFF">
+      <div style="color:#838d97ff;font-size:11px;letter-spacing:.08em">PROJECT</div>
+      <div>▾ src</div>
+      <div style="padding-left:12px;color:#60cf92FF">theme.ts</div>
+      <div style="padding-left:12px">server.ts</div>
+      <div style="padding-left:12px;color:#838d97ff">types.d.ts</div>
+      <div>▾ tests</div>
+      <div style="padding-left:12px">theme.test.ts</div>
+      <div style="margin-top:14px;color:#838d97ff;font-size:11px;letter-spacing:.08em">GIT</div>
+      <div style="color:undefined">M theme.ts</div>
+      <div style="color:#f49810FF">M server.ts</div>
+    </div>
+    <div class="editor" style="background:#132623FF">
+      <div class="gutter" style="background:#1D3738FF;color:#8D9296FF">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20</div>
+      <div class="code" style="background:#132623FF"><pre style="margin:0;color:#A8AFBEFF;font:14px/1.6 'Cascadia Code',Consolas,monospace">
+<span style="color:#54806DFF;font-style:italic;">// Gradianto theme for Zed</span>
+<span style="color:#4C836DFF;font-style:italic;">/** Nature, ocean, midnight and fuchsia gradients. */</span>
+
+<span style="color:#2EA9AAFF;">import</span> { <span style="color:#AF6E86FF;">createServer</span> } <span style="color:#2EA9AAFF;">from</span> <span style="color:#ACAC58FF;">'node:http'</span>;
+
+<span style="color:#2EA9AAFF;">interface</span> <span style="color:#C6C666FF;font-weight:700;">Theme</span> {
+  <span style="color:#6BAA85FF;">name</span><span style="color:#A3CCB5FF;">:</span> <span style="color:#C6C666FF;font-weight:700;">string</span>;
+  <span style="color:#6BAA85FF;">colors</span><span style="color:#A3CCB5FF;">:</span> <span style="color:#C6C666FF;font-weight:700;">string</span><span style="color:#A8AFBEFF;">[]</span>;
+}
+
+<span style="color:#2EA9AAFF;">const</span> <span style="color:#AF6E86FF;">accent</span> <span style="color:#CCB86CFF;">=</span> <span style="color:#ACAC58FF;">'#60cf92'</span>;
+<span style="color:#2EA9AAFF;">const</span> <span style="color:#AF6E86FF;">count</span> <span style="color:#CCB86CFF;">=</span> <span style="color:#BB8F73FF;">42</span>;
+<span style="color:#2EA9AAFF;">const</span> <span style="color:#AF6E86FF;">enabled</span> <span style="color:#CCB86CFF;">=</span> <span style="color:#71AA84FF;font-style:italic;font-weight:700;">true</span>;
+<span style="color:#2EA9AAFF;">const</span> <span style="color:#AF6E86FF;">pattern</span> <span style="color:#CCB86CFF;">=</span> <span style="color:#75AA7BFF;">/^grad(ient|ianto)$/i</span>;
+
+<span style="color:#2EA9AAFF;">export</span> <span style="color:#2EA9AAFF;">async</span> <span style="color:#2EA9AAFF;">function</span> <span style="color:#D07BD2FF;">loadTheme</span><span style="color:#A8AFBEFF;">(</span><span style="color:#8675A9FF;">id</span><span style="color:#A3CCB5FF;">:</span> <span style="color:#C6C666FF;font-weight:700;">string</span><span style="color:#A8AFBEFF;">)</span> {
+  <span style="color:#2EA9AAFF;">const</span> <span style="color:#AF6E86FF;">theme</span> <span style="color:#CCB86CFF;">=</span> <span style="color:#2EA9AAFF;">await</span> <span style="color:#D07BD2FF;">fetch</span><span style="color:#A8AFBEFF;">(</span><span style="color:#ACAC58FF;">`/api/themes/${id}`</span><span style="color:#A8AFBEFF;">)</span>;
+  <span style="color:#2EA9AAFF;">return</span> <span style="color:#AF6E86FF;">theme</span><span style="color:#A3CCB5FF;">;</span>
+}
+
+<span style="color:#54806DFF;font-style:italic;"># install and run</span>
+<span style="color:#AF6E86FF;">npm</span> <span style="color:#AF6E86FF;">install</span> <span style="color:#CCB86CFF;">&amp;&amp;</span> <span style="color:#AF6E86FF;">zed</span> <span style="color:#ACAC58FF;">.</span>
+</pre></div>
+    </div>
+  </div>
+  <div class="status" style="background:#006448FF;color:#CCCECEFF">
+    <span>⎇ main</span><span>TypeScript · UTF-8 · Gradianto</span>
+  </div>
+</div>
+<div class="card">
+  <div class="titlebar" style="background:#4A2B5EFF;color:#C8CCD0FF">
+    <span>● Gradianto Dark Fuchsia</span>
+    <span style="margin-left:auto;color:#868998ff">Gradianto</span>
+  </div>
+  <div class="tabs" style="background:#3E1C4CFF">
+    <div class="tab" style="background:#8A599EFF;color:#C8CCD0FF">theme.ts</div>
+    <div class="tab" style="color:#868998ff">server.ts</div>
+    <div class="tab" style="color:#868998ff">README.md</div>
+  </div>
+  <div class="body">
+    <div class="side" style="background:#3D214EFF;color:#C8CCD0FF">
+      <div style="color:#868998ff;font-size:11px;letter-spacing:.08em">PROJECT</div>
+      <div>▾ src</div>
+      <div style="padding-left:12px;color:#c07cd6FF">theme.ts</div>
+      <div style="padding-left:12px">server.ts</div>
+      <div style="padding-left:12px;color:#868998ff">types.d.ts</div>
+      <div>▾ tests</div>
+      <div style="padding-left:12px">theme.test.ts</div>
+      <div style="margin-top:14px;color:#868998ff;font-size:11px;letter-spacing:.08em">GIT</div>
+      <div style="color:undefined">M theme.ts</div>
+      <div style="color:#be9117FF">M server.ts</div>
+    </div>
+    <div class="editor" style="background:#1F1624FF">
+      <div class="gutter" style="background:#2A1A33FF;color:#8D9296FF">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20</div>
+      <div class="code" style="background:#1F1624FF"><pre style="margin:0;color:#A8AFBEFF;font:14px/1.6 'Cascadia Code',Consolas,monospace">
+<span style="color:#54806DFF;font-style:italic;">// Gradianto theme for Zed</span>
+<span style="color:#4C836DFF;font-style:italic;">/** Nature, ocean, midnight and fuchsia gradients. */</span>
+
+<span style="color:#2EA9AAFF;">import</span> { <span style="color:#AF6E86FF;">createServer</span> } <span style="color:#2EA9AAFF;">from</span> <span style="color:#A6AA43FF;">'node:http'</span>;
+
+<span style="color:#2EA9AAFF;">interface</span> <span style="color:#C6C666FF;font-weight:700;">Theme</span> {
+  <span style="color:#6BAA85FF;">name</span><span style="color:#A3CCB5FF;">:</span> <span style="color:#C6C666FF;font-weight:700;">string</span>;
+  <span style="color:#6BAA85FF;">colors</span><span style="color:#A3CCB5FF;">:</span> <span style="color:#C6C666FF;font-weight:700;">string</span><span style="color:#A8AFBEFF;">[]</span>;
+}
+
+<span style="color:#2EA9AAFF;">const</span> <span style="color:#AF6E86FF;">accent</span> <span style="color:#CCB86CFF;">=</span> <span style="color:#A6AA43FF;">'#60cf92'</span>;
+<span style="color:#2EA9AAFF;">const</span> <span style="color:#AF6E86FF;">count</span> <span style="color:#CCB86CFF;">=</span> <span style="color:#BB8F73FF;">42</span>;
+<span style="color:#2EA9AAFF;">const</span> <span style="color:#AF6E86FF;">enabled</span> <span style="color:#CCB86CFF;">=</span> <span style="color:#71AA84FF;font-style:italic;font-weight:700;">true</span>;
+<span style="color:#2EA9AAFF;">const</span> <span style="color:#AF6E86FF;">pattern</span> <span style="color:#CCB86CFF;">=</span> <span style="color:#75AA7BFF;">/^grad(ient|ianto)$/i</span>;
+
+<span style="color:#2EA9AAFF;">export</span> <span style="color:#2EA9AAFF;">async</span> <span style="color:#2EA9AAFF;">function</span> <span style="color:#D07BD2FF;">loadTheme</span><span style="color:#A8AFBEFF;">(</span><span style="color:#8675A9FF;">id</span><span style="color:#A3CCB5FF;">:</span> <span style="color:#C6C666FF;font-weight:700;">string</span><span style="color:#A8AFBEFF;">)</span> {
+  <span style="color:#2EA9AAFF;">const</span> <span style="color:#AF6E86FF;">theme</span> <span style="color:#CCB86CFF;">=</span> <span style="color:#2EA9AAFF;">await</span> <span style="color:#D07BD2FF;">fetch</span><span style="color:#A8AFBEFF;">(</span><span style="color:#A6AA43FF;">`/api/themes/${id}`</span><span style="color:#A8AFBEFF;">)</span>;
+  <span style="color:#2EA9AAFF;">return</span> <span style="color:#AF6E86FF;">theme</span><span style="color:#A3CCB5FF;">;</span>
+}
+
+<span style="color:#54806DFF;font-style:italic;"># install and run</span>
+<span style="color:#AF6E86FF;">npm</span> <span style="color:#AF6E86FF;">install</span> <span style="color:#CCB86CFF;">&amp;&amp;</span> <span style="color:#AF6E86FF;">zed</span> <span style="color:#A6AA43FF;">.</span>
+</pre></div>
+    </div>
+  </div>
+  <div class="status" style="background:#8A599EFF;color:#C8CCD0FF">
+    <span>⎇ main</span><span>TypeScript · UTF-8 · Gradianto</span>
+  </div>
+</div>
+<div class="card">
+  <div class="titlebar" style="background:#212F47FF;color:#C1C1C1FF">
+    <span>● Gradianto Deep Ocean</span>
+    <span style="margin-left:auto;color:#848a9aff">Gradianto</span>
+  </div>
+  <div class="tabs" style="background:#243647FF">
+    <div class="tab" style="background:#324D65FF;color:#C1C1C1FF">theme.ts</div>
+    <div class="tab" style="color:#848a9aff">server.ts</div>
+    <div class="tab" style="color:#848a9aff">README.md</div>
+  </div>
+  <div class="body">
+    <div class="side" style="background:#1C2739FF;color:#C1C1C1FF">
+      <div style="color:#848a9aff;font-size:11px;letter-spacing:.08em">PROJECT</div>
+      <div>▾ src</div>
+      <div style="padding-left:12px;color:#5eb3ffFF">theme.ts</div>
+      <div style="padding-left:12px">server.ts</div>
+      <div style="padding-left:12px;color:#848a9aff">types.d.ts</div>
+      <div>▾ tests</div>
+      <div style="padding-left:12px">theme.test.ts</div>
+      <div style="margin-top:14px;color:#848a9aff;font-size:11px;letter-spacing:.08em">GIT</div>
+      <div style="color:undefined">M theme.ts</div>
+      <div style="color:#c6a02fFF">M server.ts</div>
+    </div>
+    <div class="editor" style="background:#161C2DFF">
+      <div class="gutter" style="background:#202940FF;color:#8D9296FF">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20</div>
+      <div class="code" style="background:#161C2DFF"><pre style="margin:0;color:#A8AFBEFF;font:14px/1.6 'Cascadia Code',Consolas,monospace">
+<span style="color:#647F94FF;font-style:italic;">// Gradianto theme for Zed</span>
+<span style="color:#517D46FF;font-style:italic;">/** Nature, ocean, midnight and fuchsia gradients. */</span>
+
+<span style="color:#CC844FFF;">import</span> { <span style="color:#C66D5EFF;">createServer</span> } <span style="color:#CC844FFF;">from</span> <span style="color:#75AA5FFF;">'node:http'</span>;
+
+<span style="color:#CC844FFF;">interface</span> <span style="color:#C6C45EFF;font-weight:700;">Theme</span> {
+  <span style="color:#57B15DFF;">name</span><span style="color:#A8AFBEFF;">:</span> <span style="color:#C6C45EFF;font-weight:700;">string</span>;
+  <span style="color:#57B15DFF;">colors</span><span style="color:#A8AFBEFF;">:</span> <span style="color:#C6C45EFF;font-weight:700;">string</span><span style="color:#A8AFBEFF;">[]</span>;
+}
+
+<span style="color:#CC844FFF;">const</span> <span style="color:#C66D5EFF;">accent</span> <span style="color:#A8AFBEFF;">=</span> <span style="color:#75AA5FFF;">'#60cf92'</span>;
+<span style="color:#CC844FFF;">const</span> <span style="color:#C66D5EFF;">count</span> <span style="color:#A8AFBEFF;">=</span> <span style="color:#8FB2CEFF;">42</span>;
+<span style="color:#CC844FFF;">const</span> <span style="color:#C66D5EFF;">enabled</span> <span style="color:#A8AFBEFF;">=</span> <span style="color:#5067AAFF;font-style:italic;font-weight:700;">true</span>;
+<span style="color:#CC844FFF;">const</span> <span style="color:#C66D5EFF;">pattern</span> <span style="color:#A8AFBEFF;">=</span> <span style="color:#AC6EB7FF;">/^grad(ient|ianto)$/i</span>;
+
+<span style="color:#CC844FFF;">export</span> <span style="color:#CC844FFF;">async</span> <span style="color:#CC844FFF;">function</span> <span style="color:#8EC1FFFF;">loadTheme</span><span style="color:#A8AFBEFF;">(</span><span style="color:#C675B9FF;">id</span><span style="color:#A8AFBEFF;">:</span> <span style="color:#C6C45EFF;font-weight:700;">string</span><span style="color:#A8AFBEFF;">)</span> {
+  <span style="color:#CC844FFF;">const</span> <span style="color:#C66D5EFF;">theme</span> <span style="color:#A8AFBEFF;">=</span> <span style="color:#CC844FFF;">await</span> <span style="color:#8EC1FFFF;">fetch</span><span style="color:#A8AFBEFF;">(</span><span style="color:#75AA5FFF;">`/api/themes/${id}`</span><span style="color:#A8AFBEFF;">)</span>;
+  <span style="color:#CC844FFF;">return</span> <span style="color:#C66D5EFF;">theme</span><span style="color:#A8AFBEFF;">;</span>
+}
+
+<span style="color:#647F94FF;font-style:italic;"># install and run</span>
+<span style="color:#C66D5EFF;">npm</span> <span style="color:#C66D5EFF;">install</span> <span style="color:#A8AFBEFF;">&amp;&amp;</span> <span style="color:#C66D5EFF;">zed</span> <span style="color:#75AA5FFF;">.</span>
+</pre></div>
+    </div>
+  </div>
+  <div class="status" style="background:#324D65FF;color:#C1C1C1FF">
+    <span>⎇ main</span><span>TypeScript · UTF-8 · Gradianto</span>
+  </div>
+</div>
+<div class="card">
+  <div class="titlebar" style="background:#2C2C3EFF;color:#D4D4D4FF">
+    <span>● Gradianto Midnight Blue</span>
+    <span style="margin-left:auto;color:#a9a9abff">Gradianto</span>
+  </div>
+  <div class="tabs" style="background:#38384BFF">
+    <div class="tab" style="background:#3D3D56FF;color:#D4D4D4FF">theme.ts</div>
+    <div class="tab" style="color:#a9a9abff">server.ts</div>
+    <div class="tab" style="color:#a9a9abff">README.md</div>
+  </div>
+  <div class="body">
+    <div class="side" style="background:#282839FF;color:#D4D4D4FF">
+      <div style="color:#a9a9abff;font-size:11px;letter-spacing:.08em">PROJECT</div>
+      <div>▾ src</div>
+      <div style="padding-left:12px;color:#8769cfFF">theme.ts</div>
+      <div style="padding-left:12px">server.ts</div>
+      <div style="padding-left:12px;color:#a9a9abff">types.d.ts</div>
+      <div>▾ tests</div>
+      <div style="padding-left:12px">theme.test.ts</div>
+      <div style="margin-top:14px;color:#a9a9abff;font-size:11px;letter-spacing:.08em">GIT</div>
+      <div style="color:undefined">M theme.ts</div>
+      <div style="color:#cbbc3aFF">M server.ts</div>
+    </div>
+    <div class="editor" style="background:#1A1A25FF">
+      <div class="gutter" style="background:#262639FF;color:#B1B7BCFF">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20</div>
+      <div class="code" style="background:#1A1A25FF"><pre style="margin:0;color:#D8D8D8FF;font:14px/1.6 'Cascadia Code',Consolas,monospace">
+<span style="color:#5D69BBFF;font-style:italic;">// Gradianto theme for Zed</span>
+<span style="color:#717ED3FF;font-style:italic;">/** Nature, ocean, midnight and fuchsia gradients. */</span>
+
+<span style="color:#CC8B60FF;">import</span> { <span style="color:#757DB3FF;">createServer</span> } <span style="color:#CC8B60FF;">from</span> <span style="color:#96BF7DFF;">'node:http'</span>;
+
+<span style="color:#CC8B60FF;">interface</span> <span style="color:#CBBC3AFF;font-weight:700;">Theme</span> {
+  <span style="color:#836FAAFF;">name</span><span style="color:#D8D8D8FF;">:</span> <span style="color:#CBBC3AFF;font-weight:700;">string</span>;
+  <span style="color:#836FAAFF;">colors</span><span style="color:#D8D8D8FF;">:</span> <span style="color:#CBBC3AFF;font-weight:700;">string</span><span style="color:#D8D8D8FF;">[]</span>;
+}
+
+<span style="color:#CC8B60FF;">const</span> <span style="color:#757DB3FF;">accent</span> <span style="color:#D8D8D8FF;">=</span> <span style="color:#96BF7DFF;">'#60cf92'</span>;
+<span style="color:#CC8B60FF;">const</span> <span style="color:#757DB3FF;">count</span> <span style="color:#D8D8D8FF;">=</span> <span style="color:#BBB55BFF;">42</span>;
+<span style="color:#CC8B60FF;">const</span> <span style="color:#757DB3FF;">enabled</span> <span style="color:#D8D8D8FF;">=</span> <span style="color:#5251CEFF;font-style:italic;font-weight:700;">true</span>;
+<span style="color:#CC8B60FF;">const</span> <span style="color:#757DB3FF;">pattern</span> <span style="color:#D8D8D8FF;">=</span> <span style="color:#D7539BFF;">/^grad(ient|ianto)$/i</span>;
+
+<span style="color:#CC8B60FF;">export</span> <span style="color:#CC8B60FF;">async</span> <span style="color:#CC8B60FF;">function</span> <span style="color:#EBBF8CFF;">loadTheme</span><span style="color:#D8D8D8FF;">(</span><span style="color:#757DB3FF;">id</span><span style="color:#D8D8D8FF;">:</span> <span style="color:#CBBC3AFF;font-weight:700;">string</span><span style="color:#D8D8D8FF;">)</span> {
+  <span style="color:#CC8B60FF;">const</span> <span style="color:#757DB3FF;">theme</span> <span style="color:#D8D8D8FF;">=</span> <span style="color:#CC8B60FF;">await</span> <span style="color:#EBBF8CFF;">fetch</span><span style="color:#D8D8D8FF;">(</span><span style="color:#96BF7DFF;">`/api/themes/${id}`</span><span style="color:#D8D8D8FF;">)</span>;
+  <span style="color:#CC8B60FF;">return</span> <span style="color:#757DB3FF;">theme</span><span style="color:#D8D8D8FF;">;</span>
+}
+
+<span style="color:#5D69BBFF;font-style:italic;"># install and run</span>
+<span style="color:#757DB3FF;">npm</span> <span style="color:#757DB3FF;">install</span> <span style="color:#D8D8D8FF;">&amp;&amp;</span> <span style="color:#757DB3FF;">zed</span> <span style="color:#96BF7DFF;">.</span>
+</pre></div>
+    </div>
+  </div>
+  <div class="status" style="background:#3D3D56FF;color:#D4D4D4FF">
+    <span>⎇ main</span><span>TypeScript · UTF-8 · Gradianto</span>
+  </div>
+</div>
+</div></body></html>
