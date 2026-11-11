@@ -90,6 +90,22 @@ node scripts/preview.js    # собрать preview.html
   `version_control.*`, `search.active_match_background`), они выведены
   из палитры темы.
 
+## Релизы
+
+Релиз собирается автоматически по тегу. Имя тега должно совпадать с версией
+в `extension.toml` (`v0.1.0` ↔ `version = "0.1.0"`):
+
+```powershell
+git tag -a v0.1.1 -m "Gradianto 0.1.1"
+git push origin v0.1.1
+```
+
+Workflow `.github/workflows/release.yml` пересоберёт тему, прогонит проверки,
+убедится, что сгенерированные файлы закоммичены, и создаст GitHub Release
+с архивом `gradianto-v0.1.1.zip` (его можно распаковать и подключить как
+dev-расширение). Повторно опубликовать существующий тег можно вручную:
+Actions → Release → Run workflow.
+
 ## Благодарности
 
 * [thvardhan/Gradianto](https://github.com/thvardhan/Gradianto) — оригинальная

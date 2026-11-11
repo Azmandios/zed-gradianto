@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to release (e.g. v0.1.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify tag matches extension version
+        run: |
+          set -euo pipefail
+          version="$(sed -n 's/^version *= *"\([^"]*\)".*/\1/p' extension.toml)"
+          if [ -z "$version" ]; then
+            echo "::error::Could not read version from extension.toml"
+            exit 1
+          fi
+          if [ "$TAG" != "v$version" ]; then
+            echo "::error::Tag $TAG does not match extension.toml version $version"
+            exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          echo "Releasing Gradianto $version ($TAG)"
+
+      - name: Rebuild and validate theme
+        run: |
+          set -euo pipefail
+          node scripts/build.js
+          node scripts/validate.js
+          node scripts/preview.js
+          if ! git diff --exit-code -- themes preview.html; then
+            echo "::error::Generated files are out of date. Run the scripts locally and commit the result."
+            exit 1
+          fi
+
+      - name: Package Zed extension
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          zip -r "dist/gradianto-v${VERSION}.zip" \
+            extension.toml \
+            themes \
+            README.md \
+            preview.png
+          unzip -l "dist/gradianto-v${VERSION}.zip"
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists, updating asset"
+            gh release upload "$TAG" dist/*.zip --clobber
+          else
+            gh release create "$TAG" dist/*.zip \
+              --title "Gradianto $VERSION" \
+              --generate-notes \
+              --verify-tag
+          fi

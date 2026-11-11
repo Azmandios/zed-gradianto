@@ -1,4 +1,5 @@
 node_modules/
+dist/
 *.vsix
 
 # Local reference material (Zed theme sources, other ports) used while developing
