@@ -1,0 +1,6 @@
+node_modules/
+*.vsix
+
+# Local reference material (Zed theme sources, other ports) used while developing
+/ref/
+/vscode/
